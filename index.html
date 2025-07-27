@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Engine - Professional CV Builder</title>
+    <!-- Add html2pdf library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: white;
+        }
+
+        .user-info span {
+            font-weight: 500;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff3742;
+        }
+
+        .sign-in-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sign-in-section .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .template-selector, .mode-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .template-selector select, .mode-selector select {
+            background: #404040;
+            color: #ffffff;
+            border: 1px solid #555;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .sign-in-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            min-height: 600px;
+        }
+
+        /* Left Panel - Build Your CV */
+        .left-panel {
+            width: 50%;
+            background: white;
+            border-right: 1px solid #dee2e6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left-header {
+            padding: 30px 30px 20px 30px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .left-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 30px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #495057;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #6c757d;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+
+        /* Skills Tags */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .skill-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .skill-tag .remove-skill {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Right Panel - Preview */
+        .right-panel {
+            width: 50%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-header {
+            padding: 30px 30px 20px 30px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .right-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .template-info {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .preview-container {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .cv-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            min-height: 100%;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* PDF-specific styles for better print quality */
+               @media print {
+           .cv-preview {
+               background: white !important;
+               color: black !important;
+               border: none !important;
+               border-radius: 0 !important;
+               padding: 20px !important;
+               margin: 0 !important;
+           }
+           
+           .cv-header {
+               margin-bottom: 20px !important;
+           }
+           
+           .cv-profile-section {
+               display: flex !important;
+               align-items: center !important;
+               gap: 20px !important;
+           }
+           
+           .cv-profile-picture {
+               width: 80px !important;
+               height: 80px !important;
+               border-radius: 50% !important;
+               background: #f0f0f0 !important;
+               display: flex !important;
+               align-items: center !important;
+               justify-content: center !important;
+               color: #666 !important;
+               font-size: 24px !important;
+               overflow: hidden !important;
+               flex-shrink: 0 !important;
+               border: 2px solid #ddd !important;
+           }
+           
+           .cv-profile-picture img {
+               width: 100% !important;
+               height: 100% !important;
+               object-fit: cover !important;
+               border-radius: 50% !important;
+               display: block !important;
+           }
+           
+           .cv-name {
+               color: black !important;
+           }
+           
+           .cv-section-title {
+               color: black !important;
+               border-bottom-color: #667eea !important;
+           }
+           
+           .cv-item-title {
+               color: black !important;
+           }
+           
+           .cv-item-subtitle {
+               color: #667eea !important;
+           }
+           
+           .cv-item-description {
+               color: #333 !important;
+           }
+           
+           .contact-item {
+               color: #333 !important;
+           }
+           
+           .cv-skill-tag {
+               background: #f0f0f0 !important;
+               color: #333 !important;
+               border: 1px solid #ddd !important;
+           }
+       }
+
+        /* CV Preview Styles */
+        .cv-header {
+            margin-bottom: 30px;
+        }
+
+        .cv-profile-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cv-profile-picture {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 24px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid #dee2e6;
+        }
+
+        .cv-profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .cv-header-info {
+            flex: 1;
+        }
+
+        .cv-name {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 15px;
+        }
+
+        .cv-contact {
+            margin-bottom: 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            color: #666666;
+            font-size: 14px;
+        }
+
+        .contact-item i {
+            width: 16px;
+            color: #667eea;
+        }
+
+        .cv-section {
+            margin-bottom: 25px;
+        }
+
+        .cv-section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .cv-item {
+            margin-bottom: 15px;
+        }
+
+        .cv-item-title {
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .cv-item-subtitle {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .cv-item-date {
+            color: #888;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .cv-item-description {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .cv-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .cv-skill-tag {
+            background: #555;
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .action-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        /* Help Button */
+        .help-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .help-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Profile Picture Styles */
+        .profile-picture-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .profile-picture-preview {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #555;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #404040;
+            color: #888;
+            font-size: 12px;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .profile-picture-preview.has-image {
+            border: 2px solid #667eea;
+        }
+
+        .profile-picture-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-picture-preview i {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #888;
+        }
+
+        .profile-picture-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .profile-picture-controls .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+                height: 50vh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab-button {
+                min-width: 120px;
+            }
+
+            .cv-profile-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .cv-profile-picture {
+                width: 100px;
+                height: 100px;
+            }
+
+            .profile-picture-controls {
+                flex-direction: column;
+            }
+
+            .profile-picture-controls .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Navigation Bar -->
+        <div class="top-bar">
+            <div class="logo">
+                <i class="fas fa-file-alt"></i>
+                <span>CV Engine</span>
+            </div>
+        </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Panel - Build Your CV -->
+        <div class="left-panel">
+            <div class="left-header">
+                <h2>Build Your CV</h2>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('personal')">Personal</button>
+                <button class="tab-button" onclick="showTab('experience')">Experience</button>
+                <button class="tab-button" onclick="showTab('education')">Education</button>
+                <button class="tab-button" onclick="showTab('skills')">Skills</button>
+                <button class="tab-button" onclick="showTab('projects')">Projects</button>
+            </div>
+
+            <!-- Personal Information Tab -->
+            <div id="personal" class="tab-content active">
+                <div class="form-group">
+                    <label>Profile Picture</label>
+                    <div class="profile-picture-container">
+                        <div class="profile-picture-preview" id="profilePreview">
+                            <i class="fas fa-user"></i>
+                            <span>No image selected</span>
+                        </div>
+                        <div class="profile-picture-controls">
+                            <input type="file" id="profilePicture" accept="image/*" style="display: none;" onchange="handleProfilePicture(event)">
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('profilePicture').click()">
+                                <i class="fas fa-upload"></i>
+                                Upload Photo
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="removeProfilePicture()" id="removePhotoBtn" style="display: none;">
+                                <i class="fas fa-trash"></i>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" placeholder="Enter your full name" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" placeholder="Enter your email" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone *</label>
+                    <input type="tel" id="phone" placeholder="Enter your phone number" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <input type="text" id="location" placeholder="City, Country" oninput="updatePreview()">
+                </div>
+                <div class="form-group">
+                    <label for="summary">Professional Summary</label>
+                    <textarea id="summary" rows="4" placeholder="Write a brief professional summary..." oninput="updatePreview()"></textarea>
+                </div>
+            </div>
+
+            <!-- Experience Tab -->
+            <div id="experience" class="tab-content">
+                <div class="card-header">
+                    <h3 class="card-title">Experience</h3>
+                    <button class="btn btn-primary" onclick="addExperience()">
+                        <i class="fas fa-plus"></i>
+                        Add Experience
+                    </button>
+                </div>
+                <div id="experienceList"></div>
+            </div>
+
+            <!-- Education Tab -->
+            <div id="education" class="tab-content">
+                <div class="card-header">
+                    <h3 class="card-title">Education</h3>
+                    <button class="btn btn-primary" onclick="addEducation()">
+                        <i class="fas fa-plus"></i>
+                        Add Education
+                    </button>
+                </div>
+                <div id="educationList"></div>
+            </div>
+
+            <!-- Skills Tab -->
+            <div id="skills" class="tab-content">
+                <div class="form-group">
+                    <label for="skillInput">Add Skill</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="skillInput" placeholder="Type a skill and press Enter" style="flex: 1;">
+                        <button class="btn btn-primary" onclick="addSkill()">Add</button>
+                    </div>
+                </div>
+                <div id="skillsContainer"></div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div id="projects" class="tab-content">
+                <div class="card-header">
+                    <h3 class="card-title">Projects</h3>
+                    <button class="btn btn-primary" onclick="addProject()">
+                        <i class="fas fa-plus"></i>
+                        Add Project
+                    </button>
+                </div>
+                <div id="projectsList"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Preview -->
+        <div class="right-panel">
+            <div class="right-header">
+                <h2>Preview</h2>
+                <div class="template-info">Template: Modern</div>
+            </div>
+            <div class="preview-container">
+                <div class="cv-preview" id="cvPreview">
+                    <div class="cv-header">
+                        <div class="cv-profile-section">
+                            <div class="cv-profile-picture" id="cvProfilePicture">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="cv-header-info">
+                                <div class="cv-name" id="previewName">Your Name</div>
+                                <div class="cv-contact" id="previewContact">
+                                    <div class="contact-item">
+                                        <i class="fas fa-envelope"></i>
+                                        <span>your.email@example.com</span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>+123 456 7890</span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>City, Country</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="previewContent">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="action-btn" onclick="saveCV()">
+            <i class="fas fa-save"></i>
+            Save CV
+        </button>
+        <button class="action-btn" onclick="downloadPDF()">
+            <i class="fas fa-download"></i>
+            Download PDF
+        </button>
+        <button class="action-btn" onclick="downloadTXT()">
+            <i class="fas fa-file-alt"></i>
+            Download TXT
+        </button>
+    </div>
+
+    <!-- Help Button -->
+    <button class="help-btn" onclick="showHelp()">
+        <i class="fas fa-question"></i>
+    </button>
+    </div>
+
+    <script>
+        // Authentication and user management
+        let currentUser = null;
+        let currentCVId = null;
+
+        // Data storage
+        let cvData = {
+            personal: {},
+            education: [],
+            experience: [],
+            skills: [],
+            projects: []
+        };
+
+        // Profile picture data
+        let profilePictureData = null;
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+        });
+
+        function checkAuth() {
+            const user = localStorage.getItem('currentUser');
+            if (!user) {
+                // Show sign-in button instead of redirecting
+                showSignInButton();
+                return;
+            }
+            
+            currentUser = JSON.parse(user);
+            updateUserInterface();
+            
+            // Only load CVs if not a guest
+            if (!currentUser.isGuest) {
+                loadUserCVs();
+            }
+        }
+
+        function showSignInButton() {
+            // Add sign-in button to the top bar
+            const topBar = document.querySelector('.top-bar');
+            if (topBar) {
+                const signInBtn = document.createElement('div');
+                signInBtn.className = 'sign-in-section';
+                signInBtn.innerHTML = `
+                    <button class="btn btn-primary" onclick="goToAuth()">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </button>
+                    <button class="btn btn-secondary" onclick="loginAsGuest()">
+                        <i class="fas fa-user-secret"></i>
+                        Continue as Guest
+                    </button>
+                `;
+                
+                // Insert before the top-bar-actions
+                const topBarActions = topBar.querySelector('.top-bar-actions');
+                if (topBarActions) {
+                    topBar.insertBefore(signInBtn, topBarActions);
+                } else {
+                    topBar.appendChild(signInBtn);
+                }
+            }
+        }
+
+        function goToAuth() {
+            window.location.href = 'auth.html';
+        }
+
+        function loginAsGuest() {
+            // Create guest session
+            const guestUser = {
+                id: 'guest_' + Date.now(),
+                name: 'Guest User',
+                email: 'guest@example.com',
+                isGuest: true
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(guestUser));
+            currentUser = guestUser;
+            
+            updateUserInterface();
+        }
+
+        function updateUserInterface() {
+            // Remove existing user info if any
+            const existingUserInfo = document.querySelector('.user-info');
+            if (existingUserInfo) {
+                existingUserInfo.remove();
+            }
+
+            // Remove sign-in section if it exists (when user is authenticated)
+            const existingSignInSection = document.querySelector('.sign-in-section');
+            if (existingSignInSection) {
+                existingSignInSection.remove();
+            }
+
+            // Add user info to the page
+            const userInfo = document.createElement('div');
+            userInfo.className = 'user-info';
+            
+            if (currentUser.isGuest) {
+                userInfo.innerHTML = `
+                    <span>Welcome, Guest!</span>
+                    <div class="user-actions">
+                        <button class="btn btn-secondary" onclick="goToAuth()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </button>
+                        <button class="btn btn-danger" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Exit Guest Mode
+                        </button>
+                    </div>
+                `;
+            } else {
+                userInfo.innerHTML = `
+                    <span>Welcome, ${currentUser.name}!</span>
+                    <div class="user-actions">
+                        <button class="btn btn-secondary" onclick="showCVManager()">
+                            <i class="fas fa-folder"></i>
+                            My CVs
+                        </button>
+                        <button class="btn btn-danger" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // Insert user info after the logo
+            const logo = document.querySelector('.logo');
+            if (logo && logo.parentNode) {
+                logo.parentNode.insertBefore(userInfo, logo.nextSibling);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            
+            // Show sign-in buttons again
+            showSignInButton();
+            
+            // Clear any existing user info
+            const existingUserInfo = document.querySelector('.user-info');
+            if (existingUserInfo) {
+                existingUserInfo.remove();
+            }
+            
+            // Clear CV data
+            cvData = {
+                personal: {},
+                education: [],
+                experience: [],
+                skills: [],
+                projects: []
+            };
+            profilePictureData = null;
+            currentCVId = null;
+            
+            // Reset form fields
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('location').value = '';
+            document.getElementById('summary').value = '';
+            
+            // Clear other sections
+            document.getElementById('educationList').innerHTML = '';
+            document.getElementById('experienceList').innerHTML = '';
+            document.getElementById('skillsContainer').innerHTML = '';
+            document.getElementById('projectsList').innerHTML = '';
+            
+            // Update profile picture
+            updateProfilePicturePreview();
+            updatePreview();
+            
+            showNotification('Logged out successfully. You can continue as a guest or sign in.', 'success');
+        }
+
+        // CV Management Functions
+        function saveCV() {
+            if (!currentUser) return;
+
+            if (currentUser.isGuest) {
+                showNotification('Please sign in to save your CV. Guest mode only allows temporary use.', 'error');
+                return;
+            }
+
+            const cvName = prompt('Enter a name for this CV:');
+            if (!cvName) return;
+
+            const cvData = {
+                id: currentCVId || Date.now().toString(),
+                name: cvName,
+                data: {
+                    personal: {
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        location: document.getElementById('location').value,
+                        summary: document.getElementById('summary').value
+                    },
+                    education: getEducationData(),
+                    experience: getExperienceData(),
+                    skills: getSkillsData(),
+                    projects: getProjectsData(),
+                    profilePicture: profilePictureData
+                },
+                lastModified: new Date().toISOString()
+            };
+
+            // Get user's CVs
+            const users = JSON.parse(localStorage.getItem('cvUsers') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            
+            if (userIndex !== -1) {
+                // Update existing CV or add new one
+                const existingCVIndex = users[userIndex].cvs.findIndex(cv => cv.id === cvData.id);
+                if (existingCVIndex !== -1) {
+                    users[userIndex].cvs[existingCVIndex] = cvData;
+                } else {
+                    users[userIndex].cvs.push(cvData);
+                }
+                
+                localStorage.setItem('cvUsers', JSON.stringify(users));
+                currentCVId = cvData.id;
+                
+                showNotification('CV saved successfully!', 'success');
+            }
+        }
+
+        function loadUserCVs() {
+            if (!currentUser) return;
+
+            const users = JSON.parse(localStorage.getItem('cvUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.id);
+            
+            if (user && user.cvs.length > 0) {
+                // Load the most recent CV
+                const mostRecent = user.cvs.sort((a, b) => 
+                    new Date(b.lastModified) - new Date(a.lastModified)
+                )[0];
+                loadCV(mostRecent);
+            }
+        }
+
+        function loadCV(cv) {
+            currentCVId = cv.id;
+            
+            // Load personal data
+            if (cv.data.personal) {
+                document.getElementById('name').value = cv.data.personal.name || '';
+                document.getElementById('email').value = cv.data.personal.email || '';
+                document.getElementById('phone').value = cv.data.personal.phone || '';
+                document.getElementById('location').value = cv.data.personal.location || '';
+                document.getElementById('summary').value = cv.data.personal.summary || '';
+            }
+
+            // Load profile picture
+            if (cv.data.profilePicture) {
+                profilePictureData = cv.data.profilePicture;
+                updateProfilePicturePreview();
+            }
+
+            // Load education
+            if (cv.data.education) {
+                loadEducationData(cv.data.education);
+            }
+
+            // Load experience
+            if (cv.data.experience) {
+                loadExperienceData(cv.data.experience);
+            }
+
+            // Load skills
+            if (cv.data.skills) {
+                loadSkillsData(cv.data.skills);
+            }
+
+            // Load projects
+            if (cv.data.projects) {
+                loadProjectsData(cv.data.projects);
+            }
+
+            updatePreview();
+        }
+
+        function showCVManager() {
+            if (currentUser.isGuest) {
+                showNotification('Please sign in to access saved CVs. Guest mode only allows temporary use.', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('cvUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.id);
+            
+            if (!user || user.cvs.length === 0) {
+                alert('No saved CVs found. Create and save your first CV!');
+                return;
+            }
+
+            let cvList = 'Your Saved CVs:\n\n';
+            user.cvs.forEach((cv, index) => {
+                const date = new Date(cv.lastModified).toLocaleDateString();
+                cvList += `${index + 1}. ${cv.name} (Last modified: ${date})\n`;
+            });
+
+            const choice = prompt(cvList + '\nEnter the number of the CV to load (or press Cancel):');
+            if (choice && !isNaN(choice)) {
+                const cvIndex = parseInt(choice) - 1;
+                if (cvIndex >= 0 && cvIndex < user.cvs.length) {
+                    loadCV(user.cvs[cvIndex]);
+                    showNotification(`Loaded CV: ${user.cvs[cvIndex].name}`, 'success');
+                }
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+
+            if (type === 'success') {
+                notification.style.background = '#2ed573';
+            } else if (type === 'error') {
+                notification.style.background = '#ff4757';
+            } else {
+                notification.style.background = '#667eea';
+            }
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Helper functions to get data from form
+        function getEducationData() {
+            return cvData.education;
+        }
+
+        function getExperienceData() {
+            return cvData.experience;
+        }
+
+        function getSkillsData() {
+            return cvData.skills;
+        }
+
+        function getProjectsData() {
+            return cvData.projects;
+        }
+
+        // Helper functions to load data into form
+        function loadEducationData(educationData) {
+            // Clear existing education cards
+            const educationList = document.getElementById('educationList');
+            educationList.innerHTML = '';
+            cvData.education = [];
+
+            educationData.forEach(edu => {
+                addEducation(edu);
+            });
+        }
+
+        function loadExperienceData(experienceData) {
+            // Clear existing experience cards
+            const experienceList = document.getElementById('experienceList');
+            experienceList.innerHTML = '';
+            cvData.experience = [];
+
+            experienceData.forEach(exp => {
+                addExperience(exp);
+            });
+        }
+
+        function loadSkillsData(skillsData) {
+            // Clear existing skills
+            const skillsContainer = document.getElementById('skillsContainer');
+            skillsContainer.innerHTML = '';
+            cvData.skills = [];
+
+            skillsData.forEach(skill => {
+                addSkill(skill);
+            });
+        }
+
+        function loadProjectsData(projectsData) {
+            // Clear existing project cards
+            const projectsList = document.getElementById('projectsList');
+            projectsList.innerHTML = '';
+            cvData.projects = [];
+
+            projectsData.forEach(project => {
+                addProject(project);
+            });
+        }
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Update preview in real-time
+        function updatePreview() {
+            const name = document.getElementById('name').value || 'Your Name';
+            const email = document.getElementById('email').value || 'your.email@example.com';
+            const phone = document.getElementById('phone').value || '+123 456 7890';
+            const location = document.getElementById('location').value || 'City, Country';
+
+            // Update profile picture in preview
+            const cvProfilePicture = document.getElementById('cvProfilePicture');
+            if (profilePictureData) {
+                cvProfilePicture.innerHTML = `<img src="${profilePictureData}" alt="Profile Picture">`;
+            } else {
+                cvProfilePicture.innerHTML = '<i class="fas fa-user"></i>';
+            }
+
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewContact').innerHTML = `
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>${email}</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>${phone}</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>${location}</span>
+                </div>
+            `;
+
+            updatePreviewContent();
+        }
+
+        function updatePreviewContent() {
+            const previewContent = document.getElementById('previewContent');
+            let content = '';
+
+            // Education Section
+            if (cvData.education.length > 0) {
+                content += '<div class="cv-section">';
+                content += '<div class="cv-section-title">Education</div>';
+                cvData.education.forEach(edu => {
+                    content += `
+                        <div class="cv-item">
+                            <div class="cv-item-title">${edu.degree}</div>
+                            <div class="cv-item-subtitle">${edu.institution}</div>
+                            <div class="cv-item-date">${edu.startDate} - ${edu.endDate}</div>
+                            ${edu.gpa ? `<div class="cv-item-description">GPA: ${edu.gpa}</div>` : ''}
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            }
+
+            // Skills Section
+            if (cvData.skills.length > 0) {
+                content += '<div class="cv-section">';
+                content += '<div class="cv-section-title">Skills</div>';
+                content += '<div class="cv-skills">';
+                cvData.skills.forEach(skill => {
+                    content += `<div class="cv-skill-tag">${skill}</div>`;
+                });
+                content += '</div></div>';
+            }
+
+            // Experience Section
+            if (cvData.experience.length > 0) {
+                content += '<div class="cv-section">';
+                content += '<div class="cv-section-title">Experience</div>';
+                cvData.experience.forEach(exp => {
+                    content += `
+                        <div class="cv-item">
+                            <div class="cv-item-title">${exp.title}</div>
+                            <div class="cv-item-subtitle">${exp.company}</div>
+                            <div class="cv-item-date">${exp.startDate} - ${exp.endDate}</div>
+                            ${exp.description ? `<div class="cv-item-description">${exp.description}</div>` : ''}
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            }
+
+            // Projects Section
+            if (cvData.projects.length > 0) {
+                content += '<div class="cv-section">';
+                content += '<div class="cv-section-title">Projects</div>';
+                cvData.projects.forEach(project => {
+                    content += `
+                        <div class="cv-item">
+                            <div class="cv-item-title">${project.name}</div>
+                            ${project.description ? `<div class="cv-item-description">${project.description}</div>` : ''}
+                            ${project.technologies && project.technologies.length > 0 ? 
+                                `<div class="cv-skills">${project.technologies.map(tech => `<div class="cv-skill-tag">${tech}</div>`).join('')}</div>` : ''}
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            }
+
+            previewContent.innerHTML = content;
+        }
+
+        // Education functions
+        function addEducation(data = null) {
+            const educationCard = `
+                <div class="card" id="education-${cvData.education.length}">
+                    <div class="card-header">
+                        <div class="card-title">Education ${cvData.education.length + 1}</div>
+                        <button class="remove-btn" onclick="removeEducation(${cvData.education.length})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Degree *</label>
+                        <input type="text" placeholder="e.g., Bachelor of Science" oninput="updateEducationData(${cvData.education.length}, 'degree', this.value)" value="${data ? data.degree || '' : ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Institution *</label>
+                        <input type="text" placeholder="e.g., University Name" oninput="updateEducationData(${cvData.education.length}, 'institution', this.value)" value="${data ? data.institution || '' : ''}">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="text" placeholder="e.g., Sep 2020" oninput="updateEducationData(${cvData.education.length}, 'startDate', this.value)" value="${data ? data.startDate || '' : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="text" placeholder="e.g., Jun 2024" oninput="updateEducationData(${cvData.education.length}, 'endDate', this.value)" value="${data ? data.endDate || '' : ''}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>GPA (Optional)</label>
+                        <input type="text" placeholder="e.g., 3.8/4.0" oninput="updateEducationData(${cvData.education.length}, 'gpa', this.value)" value="${data ? data.gpa || '' : ''}">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('educationList').insertAdjacentHTML('beforeend', educationCard);
+            cvData.education.push(data || {});
+            updatePreviewContent();
+        }
+
+        function updateEducationData(index, field, value) {
+            cvData.education[index][field] = value;
+            updatePreviewContent();
+        }
+
+        function removeEducation(index) {
+            cvData.education.splice(index, 1);
+            document.getElementById(`education-${index}`).remove();
+            updatePreviewContent();
+        }
+
+        // Experience functions
+        function addExperience(data = null) {
+            const experienceCard = `
+                <div class="card" id="experience-${cvData.experience.length}">
+                    <div class="card-header">
+                        <div class="card-title">Experience ${cvData.experience.length + 1}</div>
+                        <button class="remove-btn" onclick="removeExperience(${cvData.experience.length})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Job Title *</label>
+                        <input type="text" placeholder="e.g., Software Engineer" oninput="updateExperienceData(${cvData.experience.length}, 'title', this.value)" value="${data ? data.title || '' : ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Company *</label>
+                        <input type="text" placeholder="e.g., Tech Company Inc." oninput="updateExperienceData(${cvData.experience.length}, 'company', this.value)" value="${data ? data.company || '' : ''}">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="text" placeholder="e.g., Jan 2023" oninput="updateExperienceData(${cvData.experience.length}, 'startDate', this.value)" value="${data ? data.startDate || '' : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="text" placeholder="e.g., Present" oninput="updateExperienceData(${cvData.experience.length}, 'endDate', this.value)" value="${data ? data.endDate || '' : ''}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea rows="3" placeholder="Describe your responsibilities and achievements..." oninput="updateExperienceData(${cvData.experience.length}, 'description', this.value)">${data ? data.description || '' : ''}</textarea>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('experienceList').insertAdjacentHTML('beforeend', experienceCard);
+            cvData.experience.push(data || {});
+            updatePreviewContent();
+        }
+
+        function updateExperienceData(index, field, value) {
+            cvData.experience[index][field] = value;
+            updatePreviewContent();
+        }
+
+        function removeExperience(index) {
+            cvData.experience.splice(index, 1);
+            document.getElementById(`experience-${index}`).remove();
+            updatePreviewContent();
+        }
+
+        // Skills functions
+        function addSkill() {
+            const skillInput = document.getElementById('skillInput');
+            const skill = skillInput.value.trim();
+            if (skill) {
+                cvData.skills.push(skill);
+                updateSkillsDisplay();
+                skillInput.value = '';
+                updatePreviewContent();
+            }
+        }
+
+        function updateSkillsDisplay() {
+            const container = document.getElementById('skillsContainer');
+            if (cvData.skills.length === 0) {
+                container.innerHTML = '<p style="color: #888; font-style: italic;">No skills added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = '<div class="skills-container">' + 
+                cvData.skills.map((skill, index) => `
+                    <div class="skill-tag">
+                        ${skill}
+                        <button class="remove-skill" onclick="removeSkill(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('') + '</div>';
+        }
+
+        function removeSkill(index) {
+            cvData.skills.splice(index, 1);
+            updateSkillsDisplay();
+            updatePreviewContent();
+        }
+
+        // Projects functions
+        function addProject(data = null) {
+            const projectCard = `
+                <div class="card" id="project-${cvData.projects.length}">
+                    <div class="card-header">
+                        <div class="card-title">Project ${cvData.projects.length + 1}</div>
+                        <button class="remove-btn" onclick="removeProject(${cvData.projects.length})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Name *</label>
+                        <input type="text" placeholder="e.g., E-commerce Website" oninput="updateProjectData(${cvData.projects.length}, 'name', this.value)" value="${data ? data.name || '' : ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea rows="3" placeholder="Describe the project, your role, and outcomes..." oninput="updateProjectData(${cvData.projects.length}, 'description', this.value)">${data ? data.description || '' : ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Technologies Used</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" placeholder="Type a technology and press Enter" style="flex: 1;" onkeypress="addProjectTech(event, ${cvData.projects.length})">
+                            <button class="btn btn-primary" onclick="addProjectTechBtn(${cvData.projects.length})">Add</button>
+                        </div>
+                        <div id="project-tech-${cvData.projects.length}" class="skills-container" style="margin-top: 10px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Link (Optional)</label>
+                        <input type="url" placeholder="https://github.com/username/project or https://project-demo.com" oninput="updateProjectData(${cvData.projects.length}, 'link', this.value)" value="${data ? data.link || '' : ''}">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('projectsList').insertAdjacentHTML('beforeend', projectCard);
+            cvData.projects.push(data || { technologies: [] });
+            
+            // Load technologies if they exist
+            if (data && data.technologies) {
+                cvData.projects[cvData.projects.length - 1].technologies = data.technologies;
+                updateProjectTechDisplay(cvData.projects.length - 1);
+            }
+            
+            updatePreviewContent();
+        }
+
+        function updateProjectData(index, field, value) {
+            cvData.projects[index][field] = value;
+            updatePreviewContent();
+        }
+
+        function addProjectTech(event, projectIndex) {
+            if (event.key === 'Enter') {
+                addProjectTechBtn(projectIndex);
+            }
+        }
+
+        function addProjectTechBtn(projectIndex) {
+            const input = event.target.previousElementSibling;
+            const tech = input.value.trim();
+            if (tech && !cvData.projects[projectIndex].technologies.includes(tech)) {
+                cvData.projects[projectIndex].technologies.push(tech);
+                updateProjectTechDisplay(projectIndex);
+                input.value = '';
+                updatePreviewContent();
+            }
+        }
+
+        function updateProjectTechDisplay(projectIndex) {
+            const container = document.getElementById(`project-tech-${projectIndex}`);
+            container.innerHTML = cvData.projects[projectIndex].technologies.map((tech, techIndex) => `
+                <div class="skill-tag">
+                    ${tech}
+                    <button class="remove-skill" onclick="removeProjectTech(${projectIndex}, ${techIndex})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeProjectTech(projectIndex, techIndex) {
+            cvData.projects[projectIndex].technologies.splice(techIndex, 1);
+            updateProjectTechDisplay(projectIndex);
+            updatePreviewContent();
+        }
+
+        function removeProject(index) {
+            cvData.projects.splice(index, 1);
+            document.getElementById(`project-${index}`).remove();
+            updatePreviewContent();
+        }
+
+        // Download functions
+        function downloadPDF() {
+            const element = document.getElementById('cvPreview'); // This is your CV HTML preview
+            const name = document.getElementById('name').value || 'Your Name';
+            const fileName = name !== 'Your Name' ? 
+                `${name.replace(/\s+/g, '_')}_CV.pdf` : 
+                'Professional_CV.pdf';
+            
+            // Ensure profile picture is properly loaded before generating PDF
+            const profileImg = element.querySelector('.cv-profile-picture img');
+            if (profileImg && profileImg.src) {
+                // Wait for image to load completely
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                    generatePDFWithImage(element, fileName);
+                };
+                img.onerror = function() {
+                    // If image fails to load, generate PDF without it
+                    generatePDFWithImage(element, fileName);
+                };
+                img.src = profileImg.src;
+            } else {
+                generatePDFWithImage(element, fileName);
+            }
+        }
+
+        function generatePDFWithImage(element, fileName) {
+            const opt = {
+                margin:       0.3,
+                filename:     fileName,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            
+            // Show loading message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #667eea;
+                color: white;
+                padding: 20px 30px;
+                border-radius: 10px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            `;
+            loadingMsg.textContent = 'Generating PDF... Please wait.';
+            document.body.appendChild(loadingMsg);
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Remove loading message
+                document.body.removeChild(loadingMsg);
+            }).catch(err => {
+                // Remove loading message and show error
+                document.body.removeChild(loadingMsg);
+                alert('Error generating PDF: ' + err.message);
+            });
+        }
+
+        function downloadTXT() {
+            const name = document.getElementById('name').value || 'Your Name';
+            const email = document.getElementById('email').value || 'your.email@example.com';
+            const phone = document.getElementById('phone').value || '+123 456 7890';
+            const location = document.getElementById('location').value || 'City, Country';
+            
+            let cvContent = '';
+            cvContent += 'PROFESSIONAL CURRICULUM VITAE\n';
+            cvContent += '='.repeat(50) + '\n\n';
+            cvContent += `Name: ${name}\n`;
+            cvContent += `Email: ${email}\n`;
+            cvContent += `Phone: ${phone}\n`;
+            cvContent += `Location: ${location}\n\n`;
+            
+            // Add other sections...
+            
+            const blob = new Blob([cvContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Professional_CV.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function showHelp() {
+            alert('CV Engine Help:\n\n1. Fill in your personal information\n2. Add your education, experience, skills, and projects\n3. See real-time preview on the right\n4. Download your CV as PDF or TXT\n\nAll changes are saved automatically!');
+        }
+
+        // Profile Picture Functions
+        function handleProfilePicture(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select a valid image file.');
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size should be less than 5MB.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Create a canvas to resize and optimize the image for better PDF rendering
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Set canvas size (optimize for PDF)
+                        const maxSize = 300;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > height) {
+                            if (width > maxSize) {
+                                height = (height * maxSize) / width;
+                                width = maxSize;
+                            }
+                        } else {
+                            if (height > maxSize) {
+                                width = (width * maxSize) / height;
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw and resize image
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to optimized data URL
+                        profilePictureData = canvas.toDataURL('image/jpeg', 0.9);
+                        updateProfilePicturePreview();
+                        updatePreview();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateProfilePicturePreview() {
+            const preview = document.getElementById('profilePreview');
+            const removeBtn = document.getElementById('removePhotoBtn');
+
+            if (profilePictureData) {
+                preview.innerHTML = `<img src="${profilePictureData}" alt="Profile Picture">`;
+                preview.classList.add('has-image');
+                removeBtn.style.display = 'inline-flex';
+            } else {
+                preview.innerHTML = `
+                    <i class="fas fa-user"></i>
+                    <span>No image selected</span>
+                `;
+                preview.classList.remove('has-image');
+                removeBtn.style.display = 'none';
+            }
+        }
+
+        function removeProfilePicture() {
+            profilePictureData = null;
+            document.getElementById('profilePicture').value = '';
+            updateProfilePicturePreview();
+            updatePreview();
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event listeners for Enter key in input fields
+            document.getElementById('skillInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addSkill();
+                }
+            });
+            
+            // Initialize preview
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
